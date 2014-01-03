@@ -1,0 +1,19 @@
+{
+	"base_path": "base_path",
+	"backup_path": "relative to base_path",
+	"backup_extension": ".tar.gz",
+    "folders": [
+        {
+        	"name": "folder1",
+            "path": "relative to base_path"	
+        },
+        {
+        	"name": "folder2",
+            "path": "relative to base_path"
+        },
+        {
+        	"name": "folder3",
+            "path": "relative to base_path"
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+	"backup_path": "path_to_backup",
+	"delete_after_download": true,
+  "remotes": [
+  {
+   "name": "HOST 1",
+   "url": "url",
+   "username": "username",
+   "password": "password",
+   "dirs": [
+   "backup_data",
+   "web"
+   ]
+ }
+ ,
+ {
+  "name": "HOST 2",
+  "url": "ip",
+  "username": "username",
+  "password": "password",
+  "dirs": [
+  "."
+  ]
+}
+]
+}
