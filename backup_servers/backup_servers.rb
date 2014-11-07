@@ -1,4 +1,4 @@
-#!/opt/bin/ruby
+#!/usr/bin/ruby
 
 require 'rubygems'
 require 'net/sftp'
