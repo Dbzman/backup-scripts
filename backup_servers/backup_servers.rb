@@ -10,7 +10,7 @@ require 'logger'
 begin
 
 # ---- preparing logs ----
-logger = Logger.new('logfile.log')
+logger = Logger.new("#{File.dirname(__FILE__)}/logfile.log")
 logger.level = Logger::INFO
 
 # ---- configuration ----
