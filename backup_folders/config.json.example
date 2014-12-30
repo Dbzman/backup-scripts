@@ -5,15 +5,24 @@
     "folders": [
         {
         	"name": "folder1",
-            "path": "relative to base_path"	
+            "paths": [
+                "relative to base_path_1",
+                "relative to base_path_2",	
+            ]
         },
         {
         	"name": "folder2",
-            "path": "relative to base_path"
+            "paths": [
+                "relative to base_pat_1h,
+                "relative to base_pat_2h,"
+            ]
         },
         {
         	"name": "folder3",
-            "path": "relative to base_path"
+            "paths": [
+                "relative to base_pat_1h,
+                "relative to base_pat_2h,"
+            ]
         }
     ]
 }

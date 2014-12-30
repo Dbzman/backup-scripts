@@ -23,5 +23,16 @@ timestamp = Time.now.to_i
 
 config['folders'].each do |folder|
 	puts "backing up '#{folder['name']}'"
-	system "tar -cvzpf #{BACKUP_PATH}/#{timestamp}_#{folder['name']}#{BACKUP_EXTENSION} #{BASE_PATH}#{folder['path']}"	
+
+	command = "cd #{BASE_PATH} && tar -cvzpf #{BACKUP_PATH}/#{timestamp}_#{folder['name']}#{BACKUP_EXTENSION}"	
+	
+	if folder['paths'].kind_of?(Array)
+
+	  folder['paths'].each do |folder_to_backup|
+	  	puts "folder_to_backup #{BASE_PATH}#{folder_to_backup}"
+	  	command += " #{folder_to_backup}"
+	  end
+	end
+	puts "excuting #{command}"
+	system command
 end
