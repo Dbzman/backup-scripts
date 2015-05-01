@@ -8,6 +8,11 @@ require 'prowly'
 require 'logger'
 require 'slack-notifier'
 
+def send_slack_notification(notifier, message, attachments)
+
+	notifier.ping message, attachments: [attachments]
+end
+
 begin
 
 # ---- preparing logs ----
@@ -36,7 +41,7 @@ DELETE_AFTER_DOWNLOAD = config['delete_after_download']
 logger.info('expectedBackupPath') { "BACKUP_PATH: #{BACKUP_PATH}" }
 logger.info('deletionOfRemoteFiles') { DELETE_AFTER_DOWNLOAD ? "removing files afterwards" : "files won't be removed" }
 
-errors_to_send = []
+empty_folders = []
 
 # create a new folder with current_time
 if !File.exists?(BACKUP_PATH)
@@ -74,22 +79,47 @@ config['remotes'].each do |remote|
 			end
 			if (downloaded_files == 0)
 				logger.warn('folderEmpty') { "folder '#{remote_dir}' of host '#{remote['name']}' is empty!" }
-				errors_to_send << "- folder '#{remote_dir}' of host '#{remote['name']}' is empty!"
+				empty_folders << {folder: remote_dir, host: remote['name']}
+				"- folder '#{remote_dir}' of host '#{remote['name']}' is empty!"
 			end
 		end
 	end
 end
 
 logger.info('exit') { "finished downloading backups" }
-if SLACK_ENABLED
-		notifier.ping "Finished downloading backups to '#{BACKUP_PATH}'" 
-end
 
-if errors_to_send.size != 0
+if empty_folders.size != 0
 	if SLACK_ENABLED
-		notifier.ping "No Backups found. #{errors_to_send.join("\n")}"
+		attachment = {
+		  fallback: "There were empty folders",
+		  text: "The following folders were empty",
+		  color: "danger"
+		}
+
+    fields = []
+    empty_folders.each do |folder|
+    	fields << {
+				title: "#{folder[:host]}",
+				value: "#{folder[:folder]}"
+			}
+    end
+
+		attachment[:fields] = fields
+		
+		send_slack_notification notifier, "Backup: #{current_time}", attachment
+	end
+else
+	if SLACK_ENABLED
+		attachment = {
+		  fallback: "Backup successful",
+		  text: "Backup successful",
+		  color: "good"
+		}
+
+		send_slack_notification notifier, "Backup: #{current_time}", attachment
 	end
 end
+
 
 rescue Exception => e
 	if SLACK_ENABLED
