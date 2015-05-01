@@ -1,4 +1,8 @@
 {
+  "slack_enable": false,
+  "slack_url": "https://hooks.slack.com/services/...",
+  "slack_channel": "#dev",
+  "slack_username": "backup_loader",
 	"backup_path": "path_to_backup",
 	"delete_after_download": true,
   "remotes": [

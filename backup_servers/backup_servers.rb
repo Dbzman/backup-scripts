@@ -6,6 +6,7 @@ require 'json'
 require 'openssl'
 require 'prowly'
 require 'logger'
+require 'slack-notifier'
 
 begin
 
@@ -20,6 +21,11 @@ config = JSON.parse(config_file)
 
 api_key = "38958a23d7815509541df3837f58897a543444a1"
 
+# ---- preparing notifications ----
+if SLACK_ENABLED = config['slack_url']
+	notifier = Slack::Notifier.new config['slack_url'], channel: config['slack_channel'],
+                                              username: config['slack_username']
+end
 
 # ---- preparation ----
 logger.info('prepare') { "preparing folders" }
@@ -75,26 +81,18 @@ config['remotes'].each do |remote|
 end
 
 logger.info('exit') { "finished downloading backups" }
+if SLACK_ENABLED
+		notifier.ping "Finished downloading backups to '#{BACKUP_PATH}'" 
+end
 
 if errors_to_send.size != 0
-	Prowly.notify do |n|
-		n.apikey = api_key
-		n.priority = Prowly::Notification::Priority::EMERGENCY 
-		n.application = "DiskStation Backup Loader" 
-		n.event = "No Backups found" 
-		n.description = errors_to_send.join("\n")
-		n.url = ""
+	if SLACK_ENABLED
+		notifier.ping "No Backups found. #{errors_to_send.join("\n")}"
 	end
 end
 
 rescue Exception => e
-	Prowly.notify do |n|
-		n.apikey = api_key
-		n.priority = Prowly::Notification::Priority::EMERGENCY 
-		n.application = "DiskStation Backup Loader" 
-		n.event = "Exception" 
-		n.description = e.message 
-		n.url = ""
+	if SLACK_ENABLED
+		notifier.ping "Exception: #{e.message}"
 	end
-
 end

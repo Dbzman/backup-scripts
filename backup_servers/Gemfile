@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
 gem 'net-sftp'
-gem 'prowly'
+gem 'slack-notifier'
